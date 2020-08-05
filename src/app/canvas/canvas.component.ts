@@ -37,29 +37,29 @@ export class CanvasComponent implements AfterViewInit {
   }
   
   private captureEvents(canvasEl: HTMLCanvasElement) {
-    fromEvent(canvasEl, 'mousedown')
+    fromEvent(canvasEl, 'touchstart')
     .pipe(
       switchMap((e) => {
-        return fromEvent(canvasEl, 'mousemove')
+        return fromEvent(canvasEl, 'touchmove')
           .pipe(
-            takeUntil(fromEvent(canvasEl, 'mouseup')),
-            takeUntil(fromEvent(canvasEl, 'mouseleave')),
+            takeUntil(fromEvent(canvasEl, 'touchstart')),
+            takeUntil(fromEvent(canvasEl, 'touchend')),
             pairwise() /* Return the previous and last values as array */
           )
       })
-    ).subscribe((res: [MouseEvent, MouseEvent]) => {
+    ).subscribe((res: [TouchEvent, TouchEvent]) => {
         const rect = canvasEl.getBoundingClientRect();
-  
+        // debugger
         const prevPos = {
-          x: res[0].clientX - rect.left,
-          y: res[0].clientY - rect.top
+          x: res[0].touches[0].clientX - rect.left,
+          y: res[0].touches[0].clientY - rect.top
         };
-  
+        console.log(prevPos)
         const currentPos = {
-          x: res[1].clientX - rect.left,
-          y: res[1].clientY - rect.top
+          x: res[1].touches[0].clientX - rect.left,
+          y: res[1].touches[0].clientY- rect.top
         };
-  
+        console.log(currentPos)
         this.drawOnCanvas(prevPos, currentPos);
       });
   }
@@ -80,4 +80,6 @@ export class CanvasComponent implements AfterViewInit {
     this.cx = canvasEl.getContext('2d');
     this.cx.clearRect(0, 0, canvasEl.width, canvasEl.height);
   }
+
+  
 }
