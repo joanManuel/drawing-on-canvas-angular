@@ -1,18 +1,17 @@
-/**
- * https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
- */
 import {
   Component, Input, ElementRef, AfterViewInit, ViewChild
 } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-
 import { fromEvent } from 'rxjs';
 import { switchMap, takeUntil, pairwise } from 'rxjs/operators';
 
 @Component({
   selector: 'app-canvas',
-  template: '<canvas #canvas></canvas>',
-  styles: ['canvas { border: 1px solid #000; }']
+  template: `
+  <canvas #canvas></canvas>
+ <br>
+  <button (click)="clear()" >Deshacer firma</button>
+  `,
+  styles: [`canvas { border: 1px solid #000; }`]
 })
 export class CanvasComponent implements AfterViewInit {
 
@@ -76,5 +75,9 @@ export class CanvasComponent implements AfterViewInit {
       this.cx.stroke();
     }
   }
-
+  clear() {
+    const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
+    this.cx = canvasEl.getContext('2d');
+    this.cx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+  }
 }
